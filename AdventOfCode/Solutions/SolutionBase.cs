@@ -45,7 +45,12 @@ internal abstract class SolutionBase(int year, int day, bool debug = false)
 
     private string LoadInput()
     {
-        if (Debug) return string.Empty;
+        string inputPath = "input.txt";
+
+        if (Debug && File.Exists(inputPath))
+        {
+            return File.ReadAllText(inputPath);
+        }
 
         return InputProvider.Fetch(Year, Day).Result;
     }
