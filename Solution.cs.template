@@ -1,0 +1,20 @@
+namespace AdventOfCode.Solutions.Year<Year>.Day<Day>;
+
+/// <summary>
+/// Day <Day>
+/// <see cref="https://adventofcode.com/<Year>/day/<Day>"/>
+/// </summary>
+internal class Solution : SolutionBase
+{
+    public Solution() : base(<Year>, <Day>) { }
+
+    public override object SolvePartOne()
+    {
+        return 0;
+    }
+
+    public override object SolvePartTwo()
+    {
+        return 0;
+    }
+}
