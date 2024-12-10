@@ -41,31 +41,32 @@ internal class Solution : SolutionBase
 
     private static bool CanBeCalibrated(long answer, List<int> numbers, List<char> operands)
     {
-        int combinations = (int)Math.Pow(operands.Count, numbers.Count - 1);
+        return CanBeCalibratedRecursive(answer, numbers, operands, 0, numbers[0]);
+    }
 
-        for (int combination = 0; combination < combinations; combination++)
+    private static bool CanBeCalibratedRecursive(long answer, List<int> numbers, List<char> operands, int index, long currentResult)
+    {
+        if (index == numbers.Count - 1)
         {
-            long result = numbers[0];
-            int operandDeterminer = combination;
+            return currentResult == answer;
+        }
 
-            for (int index = 1; index < numbers.Count; index++)
+        foreach (char operand in operands)
+        {
+            long newResult = operand switch
             {
-                result = operands[operandDeterminer % operands.Count] switch
-                {
-                    '+' => result + numbers[index],
-                    '*' => result * numbers[index],
-                    '|' => long.Parse($"{result}{numbers[index]}"),
-                    _ => result
-                };
-                operandDeterminer /= operands.Count;
+                '+' => currentResult + numbers[index + 1],
+                '*' => currentResult * numbers[index + 1],
+                '|' => long.Parse($"{currentResult}{numbers[index + 1]}"),
+                _ => currentResult
+            };
 
-                if (result > answer)
-                {
-                    break;
-                }
+            if (newResult > answer)
+            {
+                continue;
             }
 
-            if (result == answer)
+            if (CanBeCalibratedRecursive(answer, numbers, operands, index + 1, newResult))
             {
                 return true;
             }
