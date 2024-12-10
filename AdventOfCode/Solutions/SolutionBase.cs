@@ -52,7 +52,7 @@ internal abstract class SolutionBase(int year, int day, bool debug = false)
             return File.ReadAllText(inputPath);
         }
 
-        return InputProvider.Fetch(Year, Day).Result;
+        return InputProvider.Fetch(Year, Day).Result.Trim();
     }
 
     /// <summary>
