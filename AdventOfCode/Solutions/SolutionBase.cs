@@ -7,12 +7,21 @@ namespace AdventOfCode.Solutions;
 /// The base solution class for a day's puzzle.
 /// </summary>
 /// <param name="day">The day of the puzzle.</param>
-internal abstract class SolutionBase(int year, int day, bool debug = false)
+internal abstract class SolutionBase
 {
-    protected int Year => year;
-    protected int Day => day;
+    public SolutionBase(int year, int day, bool debug = false)
+    {
+        this.Year = year;
+        this.Day = day;
+        this.Debug = debug;
+
+        ProcessInput();
+    }
+
+    private int Year { get; }
+    private int Day { get; }
+    private bool Debug { get; }
     protected string Input => LoadInput();
-    private bool Debug => debug;
 
     /// <summary>
     /// Calculate the answers for the day's puzzle.
@@ -43,13 +52,22 @@ internal abstract class SolutionBase(int year, int day, bool debug = false)
     /// <returns>The answer to part two.</returns>
     public abstract object SolvePartTwo();
 
+    /// <summary>
+    /// Process the input for the day's puzzle.
+    /// </summary>
+    protected virtual void ProcessInput() { }
+
+    /// <summary>
+    /// Load the input for the day's puzzle.
+    /// </summary>
+    /// <returns>The puzzle's input.</returns>
     private string LoadInput()
     {
         string inputPath = "input.txt";
 
         if (Debug && File.Exists(inputPath))
         {
-            return File.ReadAllText(inputPath);
+            return File.ReadAllText(inputPath).Trim();
         }
 
         return InputProvider.Fetch(Year, Day).Result.Trim();
