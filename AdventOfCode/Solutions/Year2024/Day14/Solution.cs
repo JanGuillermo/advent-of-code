@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using AdventOfCode.Solutions.Utils;
 
 namespace AdventOfCode.Solutions.Year2024.Day14;
 
@@ -11,14 +12,14 @@ internal class Solution : SolutionBase
     readonly List<Robot> Robots = [];
     readonly int MapWidth = 101;
     readonly int MapHeight = 103;
-    readonly int TimesElapsed = 100;
+    readonly int SecondsElapsed = 100;
 
     public Solution() : base(2024, 14) { }
 
     public override object SolvePartOne()
     {
         return Robots
-            .GroupBy(robot => GetQuadrant(robot, MapWidth, MapHeight, TimesElapsed))
+            .GroupBy(robot => GetQuadrant(robot, MapWidth, MapHeight, SecondsElapsed))
             .Where(group => group.Key != 0)
             .Select(group => group.Count())
             .Aggregate(1, (product, count) => product * count);
@@ -29,9 +30,9 @@ internal class Solution : SolutionBase
         return CalculateElapsedTimeForEasterEgg(Robots, MapWidth, MapHeight);
     }
 
-    private static int GetQuadrant(Robot robot, int mapWidth, int mapHeight, int timesElapsed)
+    private static int GetQuadrant(Robot robot, int mapWidth, int mapHeight, int secondsElapsed)
     {
-        Position finalPosition = GetFinalPosition(robot, mapWidth, mapHeight, timesElapsed);
+        Position finalPosition = GetFinalPosition(robot, mapWidth, mapHeight, secondsElapsed);
         int middleX = (mapWidth - 1) / 2;
         int middleY = (mapHeight - 1) / 2;
 
@@ -51,25 +52,22 @@ internal class Solution : SolutionBase
 
     private static int CalculateElapsedTimeForEasterEgg(List<Robot> robots, int mapWidth, int mapHeight)
     {
-        int timesElapsed = 0;
+        int bestX = Enumerable
+            .Range(0, mapWidth)
+            .MinBy(secondsElapsed => MathUtils.Variance(robots.Select(robot => GetFinalPosition(robot, mapWidth, mapHeight, secondsElapsed).X)));
+        int bestY = Enumerable
+            .Range(0, mapHeight)
+            .MinBy(secondsElapsed => MathUtils.Variance(robots.Select(robot => GetFinalPosition(robot, mapWidth, mapHeight, secondsElapsed).Y)));
 
-        while (robots.Select(robot => robot.Position).Distinct().Count() != robots.Count)
-        {
-            robots = robots.Select(robot => robot.Move(GetFinalPosition(robot, mapWidth, mapHeight, timesElapsed: 1))).ToList();
-            timesElapsed++;
-        }
-
-        return timesElapsed;
+        return bestX + MathUtils.PositiveModulo(MathUtils.ModInverse(mapWidth, mapHeight) * (bestY - bestX), mapHeight) * mapWidth;
     }
 
-    private static Position GetFinalPosition(Robot robot, int mapWidth, int mapHeight, int timesElapsed)
+    private static Position GetFinalPosition(Robot robot, int mapWidth, int mapHeight, int secondsElapsed)
     {
-        int x = (robot.Position.X + (robot.MoveXTiles * timesElapsed));
-        int y = (robot.Position.Y + (robot.MoveYTiles * timesElapsed));
-        int adjustedX = ((x % mapWidth) + mapWidth) % mapWidth;
-        int adjustedY = ((y % mapHeight) + mapHeight) % mapHeight;
+        int x = MathUtils.PositiveModulo(robot.Position.X + (robot.MoveXTiles * secondsElapsed), mapWidth);
+        int y = MathUtils.PositiveModulo(robot.Position.Y + (robot.MoveYTiles * secondsElapsed), mapHeight);
 
-        return new Position(adjustedX, adjustedY);
+        return new Position(x, y);
     }
 
     protected override void ProcessInput()
