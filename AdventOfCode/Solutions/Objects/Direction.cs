@@ -11,6 +11,8 @@ internal record Direction(int Row, int Col)
         _ => throw new InvalidOperationException("Invalid instruction.")
     };
 
+    public Direction TurnRight() => new(Col, -Row);
+
     public static Direction North => new(-1, 0);
     public static Direction South => new(1, 0);
     public static Direction West => new(0, -1);

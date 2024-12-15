@@ -1,4 +1,7 @@
-﻿namespace AdventOfCode.Solutions.Year2024.Day06;
+﻿using AdventOfCode.Solutions.Objects;
+using AdventOfCode.Solutions.Utils;
+
+namespace AdventOfCode.Solutions.Year2024.Day06;
 
 /// <summary>
 /// <see href="https://adventofcode.com/2024/day/6">
@@ -7,153 +10,88 @@
 /// </summary>
 internal class Solution : SolutionBase
 {
-    Map Map;
-    public static char GUARD_INDICATOR = '^';
-    public static char OBSTACLE = '#';
+    private const char GUARD_INDICATOR = '^';
+    private const char OBSTACLE = '#';
 
-    public Solution() : base(2024, 06)
-    {
-        Map = new Map(Input
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
-            .Select(line => line.ToCharArray().ToList())
-            .ToList());
-    }
+    private Dictionary<Position, char> Map = [];
+    private int MapRows = 0;
+    private int MapCols = 0;
+
+    public Solution() : base(2024, 06) { }
 
     public override object SolvePartOne()
     {
-        Position guardPosition = GetInitialGuardPosition();
-        Direction guardDirection = Direction.Up;
-        HashSet<Position> visitedPositions = [];
-
-        // Mark the guard's initial position as visited.
-        int distinctPositions = 1;
-        Position newPosition = guardPosition.Move(guardDirection);
-
-        // Keeps going till the guard is out of bounds
-        while (!newPosition.OutOfBounds(Map.Size))
-        {
-            if (Map.Grid[newPosition.Row][newPosition.Col] == OBSTACLE)
-            {
-                guardDirection = guardDirection.TurnRight();
-            }
-            else
-            {
-                guardPosition = newPosition;
-
-                if (visitedPositions.Add(guardPosition))
-                {
-                    distinctPositions++;
-                }
-            }
-
-            newPosition = guardPosition.Move(guardDirection);
-        }
-
-        return distinctPositions;
+        return GetVisitedPositions(Map, MapRows, MapCols).Count;
     }
 
     public override object SolvePartTwo()
     {
-        Position guardPosition = GetInitialGuardPosition();
-        Direction guardDirection = Direction.Up;
-        HashSet<Position> visitedPositions = [];
+        return GetVisitedPositions(Map, MapRows, MapCols)
+            .Skip(1)
+            .Where(position => WillResultInALoop(Map, MapRows, MapCols, position))
+            .Count();
+    }
 
-        Position newPosition = guardPosition.Move(guardDirection);
+    private static HashSet<Position> GetVisitedPositions(Dictionary<Position, char> map, int mapRows, int mapCols)
+    {
+        Position guardPosition = map.First(cell => cell.Value == GUARD_INDICATOR).Key;
+        Position nextPosition = guardPosition;
+        Direction guardDirection = Direction.North;
+        HashSet<Position> visitedPositions = [guardPosition];
 
-        // Keeps going till the guard is out of bounds
-        while (!newPosition.OutOfBounds(Map.Size))
+        while ((nextPosition = guardPosition.Move(guardDirection)).IsInBounds(mapRows, mapCols))
         {
-            if (Map.Grid[newPosition.Row][newPosition.Col] == OBSTACLE)
+            if (map[nextPosition] == OBSTACLE)
             {
                 guardDirection = guardDirection.TurnRight();
             }
             else
             {
-                guardPosition = newPosition;
+                guardPosition = nextPosition;
                 visitedPositions.Add(guardPosition);
             }
-
-            newPosition = guardPosition.Move(guardDirection);
         }
 
-        // Let's place an obstacle in every visited position and see if
-        // we can get the guard stuck in a loop
-        HashSet<(Position, Direction)> visitedPositionsAndDirections = [];
-        int obstructions = 0;
-
-        foreach (Position visitedPosition in visitedPositions)
-        {
-            guardPosition = GetInitialGuardPosition();
-            guardDirection = Direction.Up;
-
-            char currentValue = Map.Grid[visitedPosition.Row][visitedPosition.Col];
-            Map.Grid[visitedPosition.Row][visitedPosition.Col] = OBSTACLE;
-
-            visitedPositionsAndDirections.Clear();
-            visitedPositionsAndDirections.Add((guardPosition, guardDirection));
-
-            while (!guardPosition.OutOfBounds(Map.Size))
-            {
-                newPosition = guardPosition.Move(guardDirection);
-
-                if (!newPosition.OutOfBounds(Map.Size) && Map.Grid[newPosition.Row][newPosition.Col] == OBSTACLE)
-                {
-                    guardDirection = guardDirection.TurnRight();
-                }
-                else
-                {
-                    guardPosition = newPosition;
-
-                    if (!visitedPositionsAndDirections.Add((guardPosition, guardDirection)))
-                    {
-                        obstructions++;
-                        break;
-                    }
-                }
-            }
-
-            Map.Grid[visitedPosition.Row][visitedPosition.Col] = currentValue;
-        }
-
-        return obstructions;
+        return visitedPositions;
     }
 
-    private Position GetInitialGuardPosition()
+    private static bool WillResultInALoop(Dictionary<Position, char> map, int mapRows, int mapCols, Position newObstacle)
     {
-        for (int row = 0; row < Map.Size; row++)
-        {
-            for (int col = 0; col < Map.Size; col++)
-            {
-                char guard = Map.Grid[row][col];
+        Dictionary<Position, char> updatedMap = new(map) { [newObstacle] = OBSTACLE };
+        Position guardPosition = updatedMap.First(cell => cell.Value == GUARD_INDICATOR).Key;
+        Position nextPosition = guardPosition;
+        Direction guardDirection = Direction.North;
+        HashSet<(Position, Direction)> visitedPositionsAndDirections = [(guardPosition, guardDirection)];
 
-                if (Map.Grid[row][col] == GUARD_INDICATOR)
+        while ((nextPosition = guardPosition.Move(guardDirection)).IsInBounds(mapRows, mapCols))
+        {
+            if (updatedMap[nextPosition] == OBSTACLE)
+            {
+                guardDirection = guardDirection.TurnRight();
+            }
+            else
+            {
+                guardPosition = nextPosition;
+
+                if (!visitedPositionsAndDirections.Add((guardPosition, guardDirection)))
                 {
-                    return new Position(row, col);
+                    return true;
                 }
             }
         }
 
-        return new Position(-1, -1);
+        return false;
     }
-}
 
-internal record Map(List<List<char>> Grid)
-{
-    public int Size => Grid.Count;
-}
+    protected override void ProcessInput()
+    {
+        InputUtils.SplitIntoLines(Input)
+            .Select((line, row) => line.Select((cell, col) => (new Position(row, col), cell)))
+            .SelectMany(x => x)
+            .ToList()
+            .ForEach(x => Map[x.Item1] = x.Item2);
 
-internal record Direction(int Row, int Col)
-{
-    public Direction TurnRight() => new(Col, -Row);
-
-    public static readonly Direction Up = new(-1, 0);
-    public static readonly Direction Right = new(0, 1);
-    public static readonly Direction Down = new(1, 0);
-    public static readonly Direction Left = new(0, -1);
-}
-
-internal record Position(int Row, int Col)
-{
-    public Position Move(Direction direction) => new(Row + direction.Row, Col + direction.Col);
-    public bool OutOfBounds(int mapSize) => Row < 0 || Col < 0 || Row >= mapSize || Col >= mapSize;
+        MapRows = Map.Max(cell => cell.Key.Row) + 1;
+        MapCols = Map.Max(cell => cell.Key.Col) + 1;
+    }
 }
