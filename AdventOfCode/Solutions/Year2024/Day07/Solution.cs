@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions.Year2024.Day07;
+﻿using AdventOfCode.Solutions.Utils;
+
+namespace AdventOfCode.Solutions.Year2024.Day07;
 
 /// <summary>
 /// <see href="https://adventofcode.com/2024/day/7">
@@ -7,47 +9,32 @@
 /// </summary>
 internal class Solution : SolutionBase
 {
-    List<(long answer, List<int> numbers)> equations = [];
+    private List<(long answer, int[] numbers)> Equations = [];
 
-    public Solution() : base(2024, 7)
-    {
-        foreach (string line in Input.Split('\n', StringSplitOptions.RemoveEmptyEntries))
-        {
-            string[] bits = line.Split(": ");
-            long answer = long.Parse(bits[0]);
-            List<int> numbers = bits[1].Split(" ").Select(int.Parse).ToList();
-
-            equations.Add((answer, numbers));
-        }
-    }
+    public Solution() : base(2024, 7) { }
 
     public override object SolvePartOne()
     {
-        return equations
-            .Where(equation => CanBeCalibrated(equation.answer, equation.numbers, ['*', '+']))
+        return Equations
+            .Where(equation => CanBeCalibrated(equation.answer, equation.numbers, ['*', '+'], 0, equation.numbers[0]))
             .Sum(equation => equation.answer);
     }
 
     public override object SolvePartTwo()
     {
-        List<(long answer, List<int> numbers)> calibratedEquations = equations.Where(equation => CanBeCalibrated(equation.answer, equation.numbers, ['*', '+'])).ToList();
+        List<(long answer, int[] numbers)> calibratedEquations = Equations.Where(equation => CanBeCalibrated(equation.answer, equation.numbers, ['*', '+'], 0, equation.numbers[0])).ToList();
         long result1 = calibratedEquations.Sum(equation => equation.answer);
-        long result2 = equations
+        long result2 = Equations
             .Except(calibratedEquations)
-            .Where(equation => CanBeCalibrated(equation.answer, equation.numbers, ['*', '+', '|']))
+            .Where(equation => CanBeCalibrated(equation.answer, equation.numbers, ['*', '+', '|'], 0, equation.numbers[0]))
             .Sum(equation => equation.answer);
 
         return result1 + result2;
     }
 
-    private static bool CanBeCalibrated(long answer, List<int> numbers, List<char> operands)
+    private static bool CanBeCalibrated(long answer, int[] numbers, char[] operands, int index, long currentResult)
     {
-        return CanBeCalibratedRecursive(answer, numbers, operands, 0, numbers[0]);
-    }
-
-    private static bool CanBeCalibratedRecursive(long answer, List<int> numbers, List<char> operands, int index, long currentResult)
-    {
-        if (index == numbers.Count - 1)
+        if (index == numbers.Length - 1)
         {
             return currentResult == answer;
         }
@@ -62,17 +49,24 @@ internal class Solution : SolutionBase
                 _ => currentResult
             };
 
-            if (newResult > answer)
-            {
-                continue;
-            }
-
-            if (CanBeCalibratedRecursive(answer, numbers, operands, index + 1, newResult))
+            if (newResult <= answer && CanBeCalibrated(answer, numbers, operands, index + 1, newResult))
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    protected override void ProcessInput()
+    {
+        foreach (string line in InputUtils.SplitIntoLines(Input))
+        {
+            string[] bits = line.Split(": ");
+            long answer = long.Parse(bits[0]);
+            int[] numbers = bits[1].Split(" ").Select(int.Parse).ToArray();
+
+            Equations.Add((answer, numbers));
+        }
     }
 }
