@@ -1,4 +1,7 @@
-﻿namespace AdventOfCode.Solutions.Year2015.Day02;
+﻿using System.Text.RegularExpressions;
+using AdventOfCode.Solutions.Utils;
+
+namespace AdventOfCode.Solutions.Year2015.Day02;
 
 /// <summary>
 /// <see href="https://adventofcode.com/2015/day/2">
@@ -7,19 +10,9 @@
 /// </summary>
 internal class Solution : SolutionBase
 {
-    List<(int length, int width, int height)> Dimensions = [];
+    private List<(int length, int width, int height)> Dimensions = [];
 
-    public Solution() : base(2015, 2)
-    {
-        List<string> lines = Input.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList();
-
-        foreach (string line in lines)
-        {
-            string[] parts = line.Split('x');
-
-            Dimensions.Add((int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2])));
-        }
-    }
+    public Solution() : base(2015, 2) { }
 
     public override object SolvePartOne()
     {
@@ -43,17 +36,31 @@ internal class Solution : SolutionBase
 
     private static int CalculateSlack((int length, int width, int height) dimension)
     {
-        List<int> sides = [dimension.length * dimension.width, dimension.width * dimension.height, dimension.height * dimension.length];
+        int[] sides = [dimension.length * dimension.width, dimension.width * dimension.height, dimension.height * dimension.length];
 
         return sides.Min();
     }
 
     private static int CalculateRibbonLength((int length, int width, int height) dimension)
     {
-        List<int> sides = [dimension.length, dimension.width, dimension.height];
+        int[] sides = [dimension.length, dimension.width, dimension.height];
 
-        sides.Sort();
+        Array.Sort(sides);
 
         return 2 * (sides[0] + sides[1]) + sides[0] * sides[1] * sides[2];
+    }
+
+    protected override void ProcessInput()
+    {
+        Regex regex = new(@"(?<length>\d+)x(?<width>\d+)x(?<height>\d+)");
+
+        Dimensions = InputUtils.SplitIntoLines(Input)
+            .Select(line => regex.Match(line))
+            .Select(match => (
+                int.Parse(match.Groups["length"].Value),
+                int.Parse(match.Groups["width"].Value),
+                int.Parse(match.Groups["height"].Value)
+            ))
+            .ToList();
     }
 }
