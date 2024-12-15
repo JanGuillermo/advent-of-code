@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using AdventOfCode.Solutions.Utils;
 
 namespace AdventOfCode.Solutions.Year2015.Day02;
 
@@ -52,10 +51,8 @@ internal class Solution : SolutionBase
 
     protected override void ProcessInput()
     {
-        Regex regex = new(@"(?<length>\d+)x(?<width>\d+)x(?<height>\d+)");
-
-        Dimensions = InputUtils.SplitIntoLines(Input)
-            .Select(line => regex.Match(line))
+        Dimensions = new Regex(@"(?<length>\d+)x(?<width>\d+)x(?<height>\d+)")
+            .Matches(Input)
             .Select(match => (
                 int.Parse(match.Groups["length"].Value),
                 int.Parse(match.Groups["width"].Value),
