@@ -3,8 +3,9 @@
 namespace AdventOfCode.Solutions.Year2024.Day04;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2024/day/4">
 /// Day 4: Ceres Search.
-/// <see cref="https://adventofcode.com/2024/day/4"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

@@ -1,8 +1,9 @@
 namespace AdventOfCode.Solutions.Year2024.Day11;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2024/day/11">
 /// Day 11: Plutonian Pebbles.
-/// <see cref="https://adventofcode.com/2024/day/11"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

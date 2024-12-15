@@ -1,8 +1,9 @@
 namespace AdventOfCode.Solutions.Year2024.Day12;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2024/day/12">
 /// Day 12: Garden Groups.
-/// <see cref="https://adventofcode.com/2024/day/12"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

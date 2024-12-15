@@ -1,8 +1,9 @@
 namespace AdventOfCode.Solutions.Year2024.Day09;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2024/day/9">
 /// Day 09: Disk Fragmenter.
-/// <see cref="https://adventofcode.com/2024/day/9"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

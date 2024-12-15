@@ -1,8 +1,9 @@
 ﻿namespace AdventOfCode.Solutions.Year2015.Day03;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2015/day/3">
 /// Day 3: Perfectly Spherical Houses in a Vacuum.
-/// <see cref="https://adventofcode.com/2015/day/3"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

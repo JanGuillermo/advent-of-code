@@ -3,8 +3,9 @@
 namespace AdventOfCode.Solutions.Year2024.Day05;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2024/day/5">
 /// Day 5: Print Queue.
-/// <see cref="https://adventofcode.com/2024/day/5"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {
