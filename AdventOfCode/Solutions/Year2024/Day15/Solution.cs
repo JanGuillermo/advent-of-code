@@ -7,7 +7,7 @@ namespace AdventOfCode.Solutions.Year2024.Day15;
 /// </summary>
 internal class Solution : SolutionBase
 {
-    public Solution() : base(2024, 15, true) { }
+    public Solution() : base(2024, 15) { }
 
     public override object SolvePartOne()
     {
@@ -17,10 +17,5 @@ internal class Solution : SolutionBase
     public override object SolvePartTwo()
     {
         return 0;
-    }
-
-    protected override void ProcessInput()
-    {
-        
     }
 }
