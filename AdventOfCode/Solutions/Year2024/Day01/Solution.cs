@@ -3,8 +3,9 @@
 namespace AdventOfCode.Solutions.Year2024.Day01;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2024/day/1">
 /// Day 1: Historian Hysteria.
-/// <see cref="https://adventofcode.com/2024/day/1"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

@@ -1,8 +1,9 @@
-﻿namespace AdventOfCode.Solutions.Year2015.Day01;
+namespace AdventOfCode.Solutions.Year2015.Day01;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2015/day/1">
 /// Day 1: Not Quite Lisp.
-/// <see cref="https://adventofcode.com/2015/day/1"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

@@ -1,8 +1,9 @@
 ﻿namespace AdventOfCode.Solutions.Year2015.Day04;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2015/day/4">
 /// Day 4: The Ideal Stocking Stuffer.
-/// <see cref="https://adventofcode.com/2015/day/4"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

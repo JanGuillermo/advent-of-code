@@ -3,8 +3,9 @@ using System.Text.RegularExpressions;
 namespace AdventOfCode.Solutions.Year2024.Day13;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2024/day/13">
 /// Day 13: Claw Contraption
-/// <see cref="https://adventofcode.com/2024/day/13"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

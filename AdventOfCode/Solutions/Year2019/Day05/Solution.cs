@@ -1,8 +1,9 @@
 namespace AdventOfCode.Solutions.Year2019.Day05;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2019/day/05">
 /// Day 05
-/// <see cref="https://adventofcode.com/2019/day/05"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

@@ -1,8 +1,9 @@
 ﻿namespace AdventOfCode.Solutions.Year2024.Day06;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2024/day/6">
 /// Day 6: Guard Gallivant.
-/// <see cref="https://adventofcode.com/2024/day/6"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {

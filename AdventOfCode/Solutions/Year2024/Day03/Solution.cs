@@ -3,8 +3,9 @@
 namespace AdventOfCode.Solutions.Year2024.Day03;
 
 /// <summary>
+/// <see href="https://adventofcode.com/2024/day/3">
 /// Day 3: Mull It Over.
-/// <see cref="https://adventofcode.com/2024/day/3"/>
+/// </see>
 /// </summary>
 internal class Solution : SolutionBase
 {
