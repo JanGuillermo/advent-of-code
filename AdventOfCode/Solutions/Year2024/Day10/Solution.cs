@@ -1,3 +1,5 @@
+using AdventOfCode.Solutions.Objects;
+
 namespace AdventOfCode.Solutions.Year2024.Day10;
 
 /// <summary>
@@ -10,8 +12,6 @@ internal class Solution : SolutionBase
     Dictionary<Position, int> Map = [];
     int MapWidth = 0;
     int MapHeight = 0;
-
-    Direction[] Directions = [Direction.Up, Direction.Down, Direction.Left, Direction.Right];
 
     public Solution() : base(2024, 10)
     {
@@ -50,7 +50,7 @@ internal class Solution : SolutionBase
     {
         HashSet<Position> trailheads = [];
 
-        foreach (Direction direction in Directions)
+        foreach (Direction direction in Direction.Orthogonal)
         {
             trailheads.UnionWith(GetTrailheads(position, direction, 0, []));
         }
@@ -74,7 +74,7 @@ internal class Solution : SolutionBase
             return trailheads;
         }
 
-        foreach (Direction newDirection in Directions)
+        foreach (Direction newDirection in Direction.Orthogonal)
         {
             trailheads.UnionWith(GetTrailheads(newPosition, newDirection, newHeight, trailheads));
         }
@@ -91,7 +91,7 @@ internal class Solution : SolutionBase
     {
         int rating = currentRating;
 
-        foreach (Direction direction in Directions)
+        foreach (Direction direction in Direction.Orthogonal)
         {
             Position newPosition = position.Move(direction);
 
@@ -114,18 +114,4 @@ internal class Solution : SolutionBase
 
         return rating;
     }
-}
-
-internal record Direction(int Row, int Col)
-{
-    public static readonly Direction Up = new(-1, 0);
-    public static readonly Direction Right = new(0, 1);
-    public static readonly Direction Down = new(1, 0);
-    public static readonly Direction Left = new(0, -1);
-}
-
-internal record Position(int Row, int Col)
-{
-    public Position Move(Direction direction) => new(Row + direction.Row, Col + direction.Col);
-    public bool OutOfBounds(int rows, int cols) => Row < 0 || Col < 0 || Row >= rows || Col >= cols;
 }

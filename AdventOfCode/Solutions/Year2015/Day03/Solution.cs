@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions.Year2015.Day03;
+﻿using AdventOfCode.Solutions.Objects;
+
+namespace AdventOfCode.Solutions.Year2015.Day03;
 
 /// <summary>
 /// <see href="https://adventofcode.com/2015/day/3">
@@ -50,23 +52,10 @@ internal class Solution : SolutionBase
 
     private static Direction GetDirection(char instruction) => instruction switch
     {
-        '^' => Direction.Up,
-        'v' => Direction.Down,
-        '>' => Direction.Right,
-        '<' => Direction.Left,
+        '^' => Direction.North,
+        'v' => Direction.South,
+        '>' => Direction.East,
+        '<' => Direction.West,
         _ => throw new InvalidOperationException("Invalid instruction.")
     };
-}
-
-internal record Direction(int Row, int Col)
-{
-    public static Direction Up => new(1, 0);
-    public static Direction Down => new(-1, 0);
-    public static Direction Right => new(0, 1);
-    public static Direction Left => new(0, -1);
-}
-
-internal record Position(int Row, int Col)
-{
-    public Position Move(Direction direction) => new Position(Row + direction.Row, Col + direction.Col);
 }

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using AdventOfCode.Solutions.Objects;
 
 namespace AdventOfCode.Solutions.Year2024.Day04;
 
@@ -12,17 +13,6 @@ internal class Solution : SolutionBase
     public Dictionary<Position, char> Puzzle = new();
     public int PuzzleWidth = 0;
     public int PuzzleHeight = 0;
-
-    public readonly static List<Direction> Directions = [
-        Direction.North,
-        Direction.South,
-        Direction.East,
-        Direction.West,
-        Direction.Northwest,
-        Direction.Northeast,
-        Direction.Southwest,
-        Direction.Southeast
-    ];
 
     public Solution() : base(2024, 04)
     {
@@ -61,7 +51,7 @@ internal class Solution : SolutionBase
         int keywordAppearances = 0;
         string keyword = "XMAS";
 
-        foreach (Direction direction in Directions)
+        foreach (Direction direction in Direction.All)
         {
             Position currentPosition = position;
             StringBuilder scannedWord = new(keyword[0]);
@@ -108,22 +98,4 @@ internal class Solution : SolutionBase
 
         return (chars[0] == chars[1] && chars[2] == chars[3]) || (chars[0] == chars[2] && chars[1] == chars[3]);
     }
-}
-
-internal record Direction(int Row, int Col)
-{
-    public static Direction North => new(-1, 0);
-    public static Direction South => new(1, 0);
-    public static Direction East => new(0, 1);
-    public static Direction West => new(0, -1);
-    public static Direction Northwest => new(-1, -1);
-    public static Direction Northeast => new(-1, 1);
-    public static Direction Southwest => new(1, -1);
-    public static Direction Southeast => new(1, 1);
-}
-
-internal record Position(int Row, int Col)
-{
-    public Position Move(Direction direction) => new(Row + direction.Row, Col + direction.Col);
-    public bool IsInBounds(int rows, int cols) => Row >= 0 && Row < rows && Col >= 0 && Col < cols;
 }

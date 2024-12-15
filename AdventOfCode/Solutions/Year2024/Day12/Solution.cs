@@ -1,3 +1,5 @@
+using AdventOfCode.Solutions.Objects;
+
 namespace AdventOfCode.Solutions.Year2024.Day12;
 
 /// <summary>
@@ -10,8 +12,6 @@ internal class Solution : SolutionBase
     readonly Dictionary<Position, char> Map = [];
     int MapWidth = 0;
     int MapHeight = 0;
-
-    Direction[] Directions = [Direction.Up, Direction.Down, Direction.Left, Direction.Right];
 
     public Solution() : base(2024, 12) { }
 
@@ -28,7 +28,7 @@ internal class Solution : SolutionBase
     private long CalculatePriceBasedOnPerimeter(List<Position> region)
     {
         int area = region.Count;
-        int perimeter = region.Sum(position => Directions.Count(direction => !region.Contains(position.Move(direction))));
+        int perimeter = region.Sum(position => Direction.Orthogonal.Count(direction => !region.Contains(position.Move(direction))));
 
         return area * perimeter;
     }
@@ -42,16 +42,16 @@ internal class Solution : SolutionBase
         {
             List<bool> cornerChecks = [
                 // Outer Corners
-                (!region.Contains(position.Move(Direction.Up)) && !region.Contains(position.Move(Direction.Right))),
-                (!region.Contains(position.Move(Direction.Down)) && !region.Contains(position.Move(Direction.Right))),
-                (!region.Contains(position.Move(Direction.Down)) && !region.Contains(position.Move(Direction.Left))),
-                (!region.Contains(position.Move(Direction.Up)) && !region.Contains(position.Move(Direction.Left))),
+                (!region.Contains(position.Move(Direction.North)) && !region.Contains(position.Move(Direction.East))),
+                (!region.Contains(position.Move(Direction.South)) && !region.Contains(position.Move(Direction.East))),
+                (!region.Contains(position.Move(Direction.South)) && !region.Contains(position.Move(Direction.West))),
+                (!region.Contains(position.Move(Direction.North)) && !region.Contains(position.Move(Direction.West))),
 
                 // Inner Corners
-                (region.Contains(position.Move(Direction.Up)) && region.Contains(position.Move(Direction.Right)) && !region.Contains(position.Move(Direction.Up).Move(Direction.Right))),
-                (region.Contains(position.Move(Direction.Down)) && region.Contains(position.Move(Direction.Right)) && !region.Contains(position.Move(Direction.Down).Move(Direction.Right))),
-                (region.Contains(position.Move(Direction.Down)) && region.Contains(position.Move(Direction.Left)) && !region.Contains(position.Move(Direction.Down).Move(Direction.Left))),
-                (region.Contains(position.Move(Direction.Up)) && region.Contains(position.Move(Direction.Left)) && !region.Contains(position.Move(Direction.Up).Move(Direction.Left)))
+                (region.Contains(position.Move(Direction.North)) && region.Contains(position.Move(Direction.East)) && !region.Contains(position.Move(Direction.North).Move(Direction.East))),
+                (region.Contains(position.Move(Direction.South)) && region.Contains(position.Move(Direction.East)) && !region.Contains(position.Move(Direction.South).Move(Direction.East))),
+                (region.Contains(position.Move(Direction.South)) && region.Contains(position.Move(Direction.West)) && !region.Contains(position.Move(Direction.South).Move(Direction.West))),
+                (region.Contains(position.Move(Direction.North)) && region.Contains(position.Move(Direction.West)) && !region.Contains(position.Move(Direction.North).Move(Direction.West)))
 
             ];
 
@@ -84,7 +84,7 @@ internal class Solution : SolutionBase
     {
         HashSet<Position> plotPositions = [position];
 
-        foreach (Direction direction in Directions)
+        foreach (Direction direction in Direction.Orthogonal)
         {
             plotPositions.UnionWith(PlotRegion(plot, position, direction, plotPositions));
         }
@@ -105,7 +105,7 @@ internal class Solution : SolutionBase
 
         plotPositions.Add(newPosition);
 
-        foreach (Direction newDirection in Directions)
+        foreach (Direction newDirection in Direction.Orthogonal)
         {
             plotPositions.UnionWith(PlotRegion(plot, newPosition, newDirection, plotPositions));
         }
@@ -129,18 +129,4 @@ internal class Solution : SolutionBase
         MapWidth = lines[0].Length;
         MapHeight = lines.Length;
     }
-}
-
-internal record Direction(int Row, int Col)
-{
-    public static readonly Direction Up = new(-1, 0);
-    public static readonly Direction Right = new(0, 1);
-    public static readonly Direction Down = new(1, 0);
-    public static readonly Direction Left = new(0, -1);
-}
-
-internal record Position(int Row, int Col)
-{
-    public Position Move(Direction direction) => new(Row + direction.Row, Col + direction.Col);
-    public bool OutOfBounds(int rows, int cols) => Row < 0 || Col < 0 || Row >= rows || Col >= cols;
 }

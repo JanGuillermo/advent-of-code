@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions.Year2024.Day06;
+﻿using AdventOfCode.Solutions.Objects;
+
+namespace AdventOfCode.Solutions.Year2024.Day06;
 
 /// <summary>
 /// <see href="https://adventofcode.com/2024/day/6">
@@ -22,7 +24,7 @@ internal class Solution : SolutionBase
     public override object SolvePartOne()
     {
         Position guardPosition = GetInitialGuardPosition();
-        Direction guardDirection = Direction.Up;
+        Direction guardDirection = Direction.North;
         HashSet<Position> visitedPositions = [];
 
         // Mark the guard's initial position as visited.
@@ -55,7 +57,7 @@ internal class Solution : SolutionBase
     public override object SolvePartTwo()
     {
         Position guardPosition = GetInitialGuardPosition();
-        Direction guardDirection = Direction.Up;
+        Direction guardDirection = Direction.North;
         HashSet<Position> visitedPositions = [];
 
         Position newPosition = guardPosition.Move(guardDirection);
@@ -84,7 +86,7 @@ internal class Solution : SolutionBase
         foreach (Position visitedPosition in visitedPositions)
         {
             guardPosition = GetInitialGuardPosition();
-            guardDirection = Direction.Up;
+            guardDirection = Direction.North;
 
             char currentValue = Map.Grid[visitedPosition.Row][visitedPosition.Col];
             Map.Grid[visitedPosition.Row][visitedPosition.Col] = OBSTACLE;
@@ -140,20 +142,4 @@ internal class Solution : SolutionBase
 internal record Map(List<List<char>> Grid)
 {
     public int Size => Grid.Count;
-}
-
-internal record Direction(int Row, int Col)
-{
-    public Direction TurnRight() => new(Col, -Row);
-
-    public static readonly Direction Up = new(-1, 0);
-    public static readonly Direction Right = new(0, 1);
-    public static readonly Direction Down = new(1, 0);
-    public static readonly Direction Left = new(0, -1);
-}
-
-internal record Position(int Row, int Col)
-{
-    public Position Move(Direction direction) => new(Row + direction.Row, Col + direction.Col);
-    public bool OutOfBounds(int mapSize) => Row < 0 || Col < 0 || Row >= mapSize || Col >= mapSize;
 }

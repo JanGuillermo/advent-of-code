@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions.Year2024.Day08;
+﻿using AdventOfCode.Solutions.Objects;
+
+namespace AdventOfCode.Solutions.Year2024.Day08;
 
 /// <summary>
 /// <see href="https://adventofcode.com/2024/day/8">
@@ -116,10 +118,4 @@ internal class Solution : SolutionBase
             antiNode = antiNode.Move(rowDiff, colDiff);
         }
     }
-}
-
-internal record Position(int Row, int Col)
-{
-    public Position Move(int row, int col) => new Position(Row + row, Col + col);
-    public bool IsInBounds(int rows, int cols) => Row >= 0 && Row < rows && Col >= 0 && Col < cols;
 }
