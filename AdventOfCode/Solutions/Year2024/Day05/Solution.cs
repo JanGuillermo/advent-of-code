@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using AdventOfCode.Solutions.Utils;
 
 namespace AdventOfCode.Solutions.Year2024.Day05;
 
@@ -9,26 +10,10 @@ namespace AdventOfCode.Solutions.Year2024.Day05;
 /// </summary>
 internal class Solution : SolutionBase
 {
-    public List<(int firstNumber, int secondNumber)> Rules = [];
-    public List<List<int>> UpdatesLists = [];
+    private List<(int firstNumber, int secondNumber)> Rules = [];
+    private List<List<int>> UpdatesLists = [];
 
-    public Solution() : base(2024, 05)
-    {
-        Rules = [];
-        UpdatesLists = [];
-        List<string> sections = Input.Split("\n\n", StringSplitOptions.RemoveEmptyEntries).ToList();
-
-        foreach (string line in sections[0].Split('\n', StringSplitOptions.RemoveEmptyEntries))
-        {
-            Match match = new Regex(@"(\d+)\|(\d+)").Match(line);
-            Rules.Add((int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value)));
-        }
-
-        foreach (string line in sections[1].Split('\n', StringSplitOptions.RemoveEmptyEntries))
-        {
-            UpdatesLists.Add(line.Split(",").Select(int.Parse).ToList());
-        }
-    }
+    public Solution() : base(2024, 05) { }
 
     public override object SolvePartOne()
     {
@@ -69,5 +54,20 @@ internal class Solution : SolutionBase
             .ToList();
     }
 
-    private int GetMiddleElement(List<int> updates) => updates[updates.Count / 2];
+    private int GetMiddleElement(List<int> elements) => elements[elements.Count / 2];
+
+    protected override void ProcessInput()
+    {
+        string[] sections = InputUtils.SplitIntoSections(Input);
+
+        Rules = new Regex(@"(\d+)\|(\d+)")
+            .Matches(sections[0])
+            .Select(match => (int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value)))
+            .ToList();
+
+        UpdatesLists = InputUtils
+            .SplitIntoLines(sections[1])
+            .Select(line => line.Split(",").Select(int.Parse).ToList())
+            .ToList();
+    }
 }
