@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions.Year2015.Day03;
+﻿using AdventOfCode.Solutions.Objects;
+
+namespace AdventOfCode.Solutions.Year2015.Day03;
 
 /// <summary>
 /// <see href="https://adventofcode.com/2015/day/3">
@@ -11,29 +13,25 @@ internal class Solution : SolutionBase
 
     public override object SolvePartOne()
     {
-        Position position = new(0, 0);
-        HashSet<Position> visited = [position];
-
-        foreach (char instruction in Input)
-        {
-            position = position.Move(GetDirection(instruction));
-            visited.Add(position);
-        }
-
-        return visited.Count;
+        return CalculateVisitedHouses(Input);
     }
 
     public override object SolvePartTwo()
+    {
+        return CalculateVisitedHouses(Input, includeRoboSanta: true);
+    }
+
+    private static int CalculateVisitedHouses(string instructions, bool includeRoboSanta = false)
     {
         Position santaPosition = new(0, 0);
         Position roboSantaPosition = new(0, 0);
         HashSet<Position> visited = [santaPosition];
 
-        for (int idx = 0; idx < Input.Length; idx++)
+        for (int idx = 0; idx < instructions.Length; idx++)
         {
-            Direction direction = GetDirection(Input[idx]);
+            Direction direction = Direction.GetDirection(instructions[idx]);
 
-            if (idx % 2 == 0)
+            if (idx % 2 == 0 || !includeRoboSanta)
             {
                 santaPosition = santaPosition.Move(direction);
                 visited.Add(santaPosition);
@@ -47,26 +45,4 @@ internal class Solution : SolutionBase
 
         return visited.Count;
     }
-
-    private static Direction GetDirection(char instruction) => instruction switch
-    {
-        '^' => Direction.Up,
-        'v' => Direction.Down,
-        '>' => Direction.Right,
-        '<' => Direction.Left,
-        _ => throw new InvalidOperationException("Invalid instruction.")
-    };
-}
-
-internal record Direction(int Row, int Col)
-{
-    public static Direction Up => new(1, 0);
-    public static Direction Down => new(-1, 0);
-    public static Direction Right => new(0, 1);
-    public static Direction Left => new(0, -1);
-}
-
-internal record Position(int Row, int Col)
-{
-    public Position Move(Direction direction) => new Position(Row + direction.Row, Col + direction.Col);
 }
