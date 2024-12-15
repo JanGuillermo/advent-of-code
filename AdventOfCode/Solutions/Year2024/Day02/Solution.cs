@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Solutions.Year2024.Day02;
+﻿using AdventOfCode.Solutions.Utils;
+
+namespace AdventOfCode.Solutions.Year2024.Day02;
 
 /// <summary>
 /// <see href="https://adventofcode.com/2024/day/2">
@@ -7,17 +9,9 @@
 /// </summary>
 internal class Solution : SolutionBase
 {
-    public List<List<int>> Reports = [];
+    private List<List<int>> Reports = [];
 
-    public Solution() : base(2024, 02)
-    {
-        Reports = Input
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
-            .Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                .Select(int.Parse)
-                .ToList())
-            .ToList();
-    }
+    public Solution() : base(2024, 02) { }
 
     public override object SolvePartOne()
     {
@@ -65,5 +59,14 @@ internal class Solution : SolutionBase
         }
 
         return true;
+    }
+
+    protected override void ProcessInput()
+    {
+        Reports = InputUtils.SplitIntoLines(Input)
+            .Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse)
+                .ToList())
+            .ToList();
     }
 }
