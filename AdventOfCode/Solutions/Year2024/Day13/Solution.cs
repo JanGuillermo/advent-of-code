@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using AdventOfCode.Solutions.Utils;
 
 namespace AdventOfCode.Solutions.Year2024.Day13;
 
@@ -9,27 +10,25 @@ namespace AdventOfCode.Solutions.Year2024.Day13;
 /// </summary>
 internal class Solution : SolutionBase
 {
-    static List<ClawMachine> ClawMachines = [];
+    private List<(decimal aX, decimal aY, decimal bX, decimal bY, decimal pX, decimal pY)> ClawMachines = [];
 
     public Solution() : base(2024, 13) { }
 
     public override object SolvePartOne()
     {
-        return ClawMachines.Sum(clawMachine => CalculateMinimumTokensToWin(clawMachine));
+        return ClawMachines.Sum(machine => CalculateMinimumTokensToWin(machine.aX, machine.aY, machine.bX, machine.bY, machine.pX, machine.pY));
     }
 
     public override object SolvePartTwo()
     {
-        return ClawMachines.Sum(clawMachine => CalculateMinimumTokensToWin(clawMachine, offset: 10000000000000));
+        return ClawMachines.Sum(machine => CalculateMinimumTokensToWin(machine.aX, machine.aY, machine.bX, machine.bY, machine.pX, machine.pY, offset: 10000000000000));
     }
 
-    private static long CalculateMinimumTokensToWin(ClawMachine clawMachine, long offset = 0)
+    private static long CalculateMinimumTokensToWin(decimal aX, decimal aY, decimal bX, decimal bY, decimal pX, decimal pY, decimal offset = 0)
     {
-        Button buttonA = clawMachine.ButtonA;
-        Button buttonB = clawMachine.ButtonB;
-        Position prize = clawMachine.Prize.Move(offset);
-        decimal buttonBPresses = ((prize.Y * buttonA.X) - (buttonA.Y * prize.X)) / ((buttonB.Y * buttonA.X) - (buttonB.X * buttonA.Y));
-        decimal buttonAPresses = (prize.X - (buttonBPresses * buttonB.X)) / buttonA.X;
+        (decimal adjustedPX, decimal adjustedPY) = (pX + offset, pY + offset);
+        decimal buttonBPresses = ((adjustedPY * aX) - (aY * adjustedPX)) / ((bY * aX) - (bX * aY));
+        decimal buttonAPresses = (adjustedPX - (buttonBPresses * bX)) / aX;
 
         if (buttonAPresses % 1 != 0
             || buttonBPresses % 1 != 0
@@ -43,28 +42,23 @@ internal class Solution : SolutionBase
 
     protected override void ProcessInput()
     {
-        string[] sections = Input.Split(["\r\n\r\n", "\n\n"], StringSplitOptions.RemoveEmptyEntries);
+        Regex regexButtonA = new Regex(@"Button A: X\+(?<x>\d+), Y\+(?<y>\d+)");
+        Regex regexButtonB = new Regex(@"Button B: X\+(?<x>\d+), Y\+(?<y>\d+)");
+        Regex regexPrize = new Regex(@"Prize: X=(?<x>\d+), Y=(?<y>\d+)");
 
-        foreach (string section in sections)
+        foreach (string section in InputUtils.SplitIntoSections(Input))
         {
-            Match regexButtonA = new Regex(@"Button A: X\+(?<x>\d+), Y\+(?<y>\d+)").Match(section);
-            Match regexButtonB = new Regex(@"Button B: X\+(?<x>\d+), Y\+(?<y>\d+)").Match(section);
-            Match regexPrize = new Regex(@"Prize: X=(?<x>\d+), Y=(?<y>\d+)").Match(section);
+            Match matchButtonA = regexButtonA.Match(section);
+            Match matchButtonB = regexButtonB.Match(section);
+            Match matchPrize = regexPrize.Match(section);
 
-            Button buttonA = new(decimal.Parse(regexButtonA.Groups["x"].Value), decimal.Parse(regexButtonA.Groups["y"].Value));
-            Button buttonB = new(decimal.Parse(regexButtonB.Groups["x"].Value), decimal.Parse(regexButtonB.Groups["y"].Value));
-            Position prize = new(decimal.Parse(regexPrize.Groups["x"].Value), decimal.Parse(regexPrize.Groups["y"].Value));
-
-            ClawMachines.Add(new ClawMachine(buttonA, buttonB, prize));
+            ClawMachines.Add((
+                aX: decimal.Parse(matchButtonA.Groups["x"].Value),
+                aY: decimal.Parse(matchButtonA.Groups["y"].Value),
+                bX: decimal.Parse(matchButtonB.Groups["x"].Value),
+                bY: decimal.Parse(matchButtonB.Groups["y"].Value),
+                pX: decimal.Parse(matchPrize.Groups["x"].Value),
+                pY: decimal.Parse(matchPrize.Groups["y"].Value)));
         }
     }
-}
-
-internal record ClawMachine(Button ButtonA, Button ButtonB, Position Prize);
-
-internal record Button(decimal X, decimal Y);
-
-internal record Position(decimal X, decimal Y)
-{
-    public Position Move(long offset) => new(X + offset, Y + offset);
 }
