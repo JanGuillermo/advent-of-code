@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Solutions.Objects;
 
-internal record Direction(int Row, int Col)
+internal record Direction(int RowOffset, int ColOffset)
 {
     public static Direction GetDirection(char instruction) => instruction switch
     {
@@ -11,7 +11,7 @@ internal record Direction(int Row, int Col)
         _ => throw new InvalidOperationException("Invalid instruction.")
     };
 
-    public Direction TurnRight() => new(Col, -Row);
+    public Direction TurnRight() => new(ColOffset, -RowOffset);
 
     public static Direction North => new(-1, 0);
     public static Direction South => new(1, 0);
@@ -21,7 +21,7 @@ internal record Direction(int Row, int Col)
     public static Direction Northeast => new(-1, 1);
     public static Direction Southwest => new(1, -1);
     public static Direction Southeast => new(1, 1);
-    public static Direction[] Orthogonal = [North, South, West, East];
-    public static Direction[] Diagonal = [Northwest, Northeast, Southwest, Southeast];
-    public static Direction[] All = Orthogonal.Concat(Diagonal).ToArray();
+    public static readonly Direction[] Orthogonal = [North, South, West, East];
+    public static readonly Direction[] Diagonal = [Northwest, Northeast, Southwest, Southeast];
+    public static readonly Direction[] All = Orthogonal.Concat(Diagonal).ToArray();
 }
